@@ -28,6 +28,7 @@ def verify_access_token(token: str, creds_err):
         id: str = decoded.get("user_id")
         if id is None:
             raise creds_err
+        id = str(id)
         token_data = schemas.TokenData(id=id)
     except JWTError:
         raise creds_err
@@ -46,8 +47,6 @@ def verify_password_token(token: str, creds_err):
         token_data = schemas.TokenData(id=idx)
     except JWTError:
         raise creds_err
-    except Exception as e:
-        print(f"id = {idx}, decoded = {decoded}")
     return [token_data, psx]
 
 
