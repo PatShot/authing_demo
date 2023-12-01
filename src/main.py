@@ -1,12 +1,12 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from database import models
-from database.database import engine
+from app.database.create_all import create_all_tables
+from app.database.database import engine
 from config import settings
+from app.routes import user, auth
+create_all_tables()
+# print(settings)
 
-print(settings)
-
-models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
@@ -22,4 +22,7 @@ app.add_middleware(
 
 @app.get("/")
 async def root():
-    return {"message": "Hello Mom"}
+    return {"message": "HelloWorld"}
+
+app.include_router(user.router)
+app.include_router(auth.router)
