@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.database.create_all import create_all_tables
 from app.database.database import engine
 from config import settings
-from app.routes import user
+from app.routes import user, auth
 create_all_tables()
 # print(settings)
 
@@ -22,6 +22,7 @@ app.add_middleware(
 
 @app.get("/")
 async def root():
-    return {"message": "Hello Mom"}
+    return {"message": "HelloWorld"}
 
 app.include_router(user.router)
+app.include_router(auth.router)

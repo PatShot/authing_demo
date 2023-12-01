@@ -9,5 +9,5 @@ except ConnectionError:
 # Create new user
 print(requests.post(
     "http://127.0.0.1:8000/users/create",
-    json={"email": "johndoe@testmail.com", "password": "pass123"}
+    json={"email": "janedoe@testmail.com", "password": "pass123"}
 ).json())

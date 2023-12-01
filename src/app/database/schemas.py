@@ -28,3 +28,13 @@ class Token(BaseModel):
 
 class TokenData(BaseModel):
     id: Optional[str] = None
+
+
+class ForgotPass(BaseModel):
+    email: EmailStr
+
+
+class ResetPassToken(BaseModel):
+    access_token: str
+    token_type: str
+    new_password: str

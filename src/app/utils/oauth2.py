@@ -8,13 +8,13 @@ from jose import jwt, JWTError
 
 auth_scheme = OAuth2PasswordBearer(tokenUrl='login')
 
-SECRET_KEY = settings.secret_key
-EXPIRE_TIME = settings.jwt_expire_minutes
-ALGORITHM = settings.algorithm
+SECRET_KEY = settings["secret_key"]
+EXPIRE_TIME = settings["jwt_expire_minutes"]
+ALGORITHM = settings["algorithm"]
 
-def create_access_token(data: dict):
+def create_access_token(data: dict, mins=EXPIRE_TIME):
     encoding_data = data.copy()
-    expire = datetime.utcnow() + timedelta(minutes=EXPIRE_TIME)
+    expire = datetime.utcnow() + timedelta(minutes=mins)
     encoding_data.update({"exp": expire})
 
     encoded_jwt = jwt.encode(encoding_data, SECRET_KEY, algorithm=ALGORITHM)
@@ -33,6 +33,22 @@ def verify_access_token(token: str, creds_err):
         raise creds_err
 
     return token_data
+
+
+def verify_password_token(token: str, creds_err):
+    try:
+        decoded = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        idx= decoded.get("user_id")
+        psx= decoded.get("pass")
+        idx= str(idx)
+        if idx is None:
+            raise creds_err
+        token_data = schemas.TokenData(id=idx)
+    except JWTError:
+        raise creds_err
+    except Exception as e:
+        print(f"id = {idx}, decoded = {decoded}")
+    return [token_data, psx]
 
 
 def get_curr_user(token:str = Depends(auth_scheme), db: Session = Depends(database.get_db)):
