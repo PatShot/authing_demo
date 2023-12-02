@@ -86,8 +86,11 @@ def update_profile(
     print(new_profile)
     
     prof_query.update(new_profile, synchronize_session=False)
+    db.commit()
 
     results = prof_query.first()
+    if results == None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
 
     profile_out = {
         "id": results.id,

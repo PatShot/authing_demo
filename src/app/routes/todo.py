@@ -65,7 +65,7 @@ def create_task_item(
     db.refresh(new_task)
 
 
-@router.get("/", status_code=status.HTTP_200_OK)
+@router.get("/get", status_code=status.HTTP_200_OK)
 def get_task_items(
     db: Session = Depends(get_db),
     current_user = Depends(oauth2.get_curr_user)
@@ -78,5 +78,31 @@ def get_task_items(
 
     results = {str(i):task for i, task in enumerate(tasks)}
     return results
+
+@router.delete("/delete/{idx}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_task_items(
+    idx: int,
+    db: Session = Depends(get_db),
+    current_user = Depends(oauth2.get_curr_user)
+    ):
+    """
+    Delete specific task with task_id idx for current
+    logged in user
+    """
+
+    task_query = db.query(
+        models.ToDoTask
+    ).filter(
+        models.ToDoTask.task_id == idx
+    )
+
+    task_del = task_query.first()
+    if task_del == None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+    if task_del.user_id != current_user.id:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
+
+    task_query.delete(synchronize_session=False)
+    db.commit()
 
 
