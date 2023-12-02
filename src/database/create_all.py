@@ -1,5 +1,5 @@
-from app.database.database import engine
-from app.database import models
+from src.database.database import engine
+from src.database import models
 
 def create_all_tables():
     print("Creating all tables...")

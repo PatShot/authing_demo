@@ -1,7 +1,6 @@
-from config import settings
+from src.config import settings
 from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker, scoped_session
+from sqlalchemy.orm import sessionmaker, scoped_session, declarative_base
 
 print(settings["database_username"])
 # database_name = settings.database_name

@@ -1,12 +1,9 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.database.create_all import create_all_tables
-from app.database.database import engine
-from config import settings
-from app.routes import user, auth
-create_all_tables()
+# from src.database.create_all import create_all_tables
+from src.routes import user, auth, profile, todo
+# create_all_tables()
 # print(settings)
-
 
 app = FastAPI()
 
@@ -26,3 +23,5 @@ async def root():
 
 app.include_router(user.router)
 app.include_router(auth.router)
+app.include_router(profile.router)
+app.include_router(todo.router)
