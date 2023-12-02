@@ -1,7 +1,7 @@
 import os
 from dotenv import load_dotenv
 
-def read_env_file(f_path = "test.env"):
+def read_env_file(f_path = "./test.env"):
     load_dotenv(f_path)
     env_vars = {}
 

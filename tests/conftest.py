@@ -4,8 +4,9 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from src.main import app
 from src.database.database import Base, get_db
-from .settings import settings
+from src.config import settings
 
+print(settings)
 
 # Test Database
 TEST_DATABASE = f'postgresql://{settings["database_username"]}:{settings["database_password"]}@{settings["database_hostname"]}:{settings["database_port"]}/testbase'
@@ -17,7 +18,7 @@ TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engin
 # Pytest fixture scoped to function by default
 @pytest.fixture()
 def session():
-    Base.metadata.drop_all(bind=engine)
+    # Base.metadata.drop_all(bind=engine)
     Base.metadata.create_all(bind=engine)
     db = TestingSessionLocal()
     try:
@@ -33,8 +34,8 @@ def client(session):
         finally:
             session.close()
         # give function as a closure to dependency_overrides
-        app.dependency_overrides[get_db] = override_get_db
-        yield TestClient(app)
+    app.dependency_overrides[get_db] = override_get_db
+    yield TestClient(app)
 
 
 
