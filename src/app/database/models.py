@@ -20,3 +20,14 @@ class Profile(Base):
     name = Column(String)
     display_handle = Column(String, default="user")
     created_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=text('now()'))
+
+
+class ToDoTask(Base):
+    __tablename__ = "todo"
+    task_id = Column(Integer, primary_key=True, nullable=False)
+    task_name = Column(String, nullable=False)
+    description = Column(String)
+    due_date = Column(TIMESTAMP(timezone=True), nullable=False)
+    priority = Column(Integer)
+    status = Column(String, default="Pending")
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)

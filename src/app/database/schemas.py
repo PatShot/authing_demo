@@ -66,3 +66,11 @@ class ProfileShortOut(BaseModel):
     name: str
     display_handle: str
     created_at: datetime
+
+
+class TaskItem(BaseModel):
+    task_name : str
+    description : str
+    due_date : str
+    priority : int
+    status : str
