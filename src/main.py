@@ -1,12 +1,9 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.database.create_all import create_all_tables
-from app.database.database import engine
-from config import settings
-from app.routes import user, auth, profile, todo
-create_all_tables()
+# from src.database.create_all import create_all_tables
+from routes import user, auth, profile, todo
+# create_all_tables()
 # print(settings)
-
 
 app = FastAPI()
 

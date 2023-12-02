@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 from fastapi import Depends, status, HTTPException
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
-from app.database import models, database, schemas
+from database import models, database, schemas
 from config import settings
 from jose import jwt, JWTError
 

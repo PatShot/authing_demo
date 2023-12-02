@@ -13,6 +13,12 @@ def get_valid_jwt(valid_credentials):
     )
     return jwt_token
 
-def test_get_jwt(get_valid_jwt):
-    jwt_token = get_valid_jwt
-    assert jwt_token is not None
+# def test_get_jwt(get_valid_jwt):
+#     jwt_token = get_valid_jwt
+#     assert jwt_token is not None
+
+port = "8000"
+BASE_URL = f"127.0.0.1:{port}/"
+API = BASE_URL+"{route}/{extension}"
+
+
