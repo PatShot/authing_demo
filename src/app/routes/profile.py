@@ -83,7 +83,7 @@ def update_profile(
         "name": updated_profile.name,
         "display_handle": updated_profile.display_handle
     }
-    print(new_profile)
+    # print(new_profile)
     
     prof_query.update(new_profile, synchronize_session=False)
     db.commit()

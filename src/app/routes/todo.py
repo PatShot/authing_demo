@@ -104,5 +104,48 @@ def delete_task_items(
 
     task_query.delete(synchronize_session=False)
     db.commit()
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
+@router.put("/{idx}", response_model=schemas.TaskItem)
+def update_task_item(
+    idx: int,
+    task_updated: schemas.TaskItem,
+    db: Session = Depends(get_db),
+    current_user = Depends(oauth2.get_curr_user)
+    ):
+    """
+    Update a specific task.
+    Args:
+    ---
+    idx: id of task
+    task_update: input from body with updated fields from
+        frontend
+    """
+    task_query = db.query(
+        models.ToDoTask
+    ).filter(
+        models.ToDoTask.task_id == idx
+    )
+
+    task = task_query.first()
+    if task == None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+    if task.user_id != current_user.id:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
+
+    task_query.update(task_updated.model_dump(), synchronize_session=False)
+    db.commit()
+    
+    check_task =task_query.first()
+    if check_task == None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+
+    task_out = {
+        "task_name": check_task.task_name,
+        "description": check_task.description,
+        "due_date": str(check_task.due_date),
+        "priority": check_task.priority,
+        "status": check_task.status
+    }
+    return schemas.TaskItem(**task_out)
