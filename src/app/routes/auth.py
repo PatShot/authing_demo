@@ -11,6 +11,10 @@ router = APIRouter(tags=["Authenticate"])
 @router.post("/login", response_model=schemas.Token)
 def login(cred: OAuth2PasswordRequestForm=Depends(), db: Session = Depends(get_db)):
     """
+    Args
+    ---
+    username: The email associated with the account
+    passowrd: The password associated with the email
     Login user with a OAuth2 urlencoded post request. If valid, then return a JSON Web Token.
     If invalid, returns 403 Forbidden.
     """

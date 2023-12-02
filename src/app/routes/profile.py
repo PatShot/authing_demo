@@ -1,4 +1,4 @@
-from fastapi import APIRouter, status, HTTPException, Depends
+from fastapi import APIRouter, status, HTTPException, Depends, Response
 from sqlalchemy.orm import Session
 from app.database import schemas, models
 from app.database.database import get_db
@@ -38,13 +38,63 @@ def get_profile(db: Session = Depends(get_db), current_user  = Depends(oauth2.ge
     if not results:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
 
-    profile_out = {}
-    for profile, user in results:
-        profile_out["user_id"] = profile.user_id
-        profile_out["name"] = profile.name
-        profile_out["username"] = user.username
-        profile_out["email"] = user.email
-        profile_out["display_handle"] = profile.display_handle
-        profile_out["created_at"] = profile.created_at
+    profile_out = {
+        "name" : results.Profile.name,
+        "user_id" : results.Profile.user_id,
+        "username" : results.User.username,
+        "email" : results.User.email,
+        "display_handle" : results.Profile.display_handle,
+        "created_at" : results.Profile.created_at
+    }
 
     return schemas.ProfileOut(**profile_out)
+
+@router.delete("/delete/{idx}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_profile(idx: int, db: Session = Depends(get_db), current_user = Depends(oauth2.get_curr_user)):
+    prof_query = db.query(models.Profile).filter(models.Profile.id == idx)
+    profile = prof_query.first()
+    if profile == None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+    if profile.user_id != current_user.id:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
+    
+    prof_query.delete(synchronize_session=False)
+    db.commit()
+
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+
+@router.put("/{idx}", response_model=schemas.ProfileShortOut)
+def update_profile(
+        idx: int,
+        updated_profile: schemas.ProfileIn, 
+        db:Session = Depends(get_db),
+        current_user = Depends(oauth2.get_curr_user)
+    ):
+    prof_query = db.query(models.Profile).filter(models.Profile.id == idx)
+    profile = prof_query.first()
+    if profile == None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+    if profile.user_id != current_user.id:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
+    
+    new_profile = {
+        "user_id": profile.user_id,
+        "name": updated_profile.name,
+        "display_handle": updated_profile.display_handle
+    }
+    print(new_profile)
+    
+    prof_query.update(new_profile, synchronize_session=False)
+
+    results = prof_query.first()
+
+    profile_out = {
+        "id": results.id,
+        "name" : results.name,
+        "user_id" : results.user_id,
+        "display_handle" : results.display_handle,
+        "created_at" : results.created_at
+    }
+
+    return schemas.ProfileShortOut(**profile_out)

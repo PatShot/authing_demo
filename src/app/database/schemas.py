@@ -58,3 +58,11 @@ class ProfileOut(BaseModel):
     email: str
     display_handle: str
     created_at: datetime
+
+
+class ProfileShortOut(BaseModel):
+    id: int
+    user_id: int
+    name: str
+    display_handle: str
+    created_at: datetime
