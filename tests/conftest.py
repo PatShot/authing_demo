@@ -18,7 +18,7 @@ TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engin
 # Pytest fixture scoped to function by default
 @pytest.fixture()
 def session():
-    # Base.metadata.drop_all(bind=engine)
+    Base.metadata.drop_all(bind=engine)
     Base.metadata.create_all(bind=engine)
     db = TestingSessionLocal()
     try:
@@ -37,5 +37,19 @@ def client(session):
     app.dependency_overrides[get_db] = override_get_db
     yield TestClient(app)
 
+@pytest.fixture
+def test_user(client):
+    user_data = {
+        "username": "tester1",
+        "email": "test@mail.com",
+        "password": "password123"
+    }
+    res = client.post("/users/create", json = user_data)
 
+    assert res.status_code == 201
+
+    new_user = res.json()
+    print("new_user")
+    new_user['password'] = user_data["password"]
+    return new_user
 
