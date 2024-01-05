@@ -1,4 +1,4 @@
-# immtask1
+# API Testing
 A simple API project in Python for demonstration.
 
 ## Running
